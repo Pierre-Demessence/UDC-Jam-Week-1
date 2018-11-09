@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
         _miniGames.ForEach(miniGame => miniGame.StopMinigame());
         _textLevel.text = level.ToString();
         
-        foreach (var miniGame in SelectMiniGames(level)) StartCoroutine(miniGame.StartGameDelayed());
+        foreach (var miniGame in SelectMiniGames(level)) StartCoroutine(miniGame.StartGameDelayed(level));
 
         _levelTimeLeft = _timePerLevel;
         while (_levelTimeLeft > 0)

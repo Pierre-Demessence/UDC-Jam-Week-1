@@ -12,6 +12,7 @@ public abstract class MiniGame : MonoBehaviour
     private bool _running;
     [SerializeField] private Text _timer;
     private Coroutine _gameRestartCoroutine;
+    private int _currentLevel;
 
     public bool Running
     {
@@ -31,8 +32,9 @@ public abstract class MiniGame : MonoBehaviour
         TheButtonAction();
     }
 
-    protected virtual void StartMinigame()
+    protected virtual void StartMinigame(int level)
     {
+        _currentLevel = level;
         Running = true;
     }
 
@@ -47,7 +49,7 @@ public abstract class MiniGame : MonoBehaviour
     {
         _gameManager.Lives--;
         StopMinigame();
-        _gameRestartCoroutine = StartCoroutine(StartGameDelayed());
+        _gameRestartCoroutine = StartCoroutine(StartGameDelayed(_currentLevel));
     }
 
     protected virtual void Awake()
@@ -60,7 +62,7 @@ public abstract class MiniGame : MonoBehaviour
 
     protected abstract void ResetMinigame();
 
-    public IEnumerator StartGameDelayed()
+    public IEnumerator StartGameDelayed(int level)
     {   
         _resumeTimeLeft = _resumeDelayTime;
         _timer.enabled = true;
@@ -72,6 +74,6 @@ public abstract class MiniGame : MonoBehaviour
             yield return null;
         }
 
-        StartMinigame();
+        StartMinigame(level);
     }
 }
