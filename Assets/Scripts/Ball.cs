@@ -2,26 +2,25 @@
 
 public class Ball : MonoBehaviour
 {
-    private GameManager _gameManager;
+    
     private Rigidbody2D _rigidbody2D;
 
-    [SerializeField] private float _speed = 5;
+    public float Speed { get; set; }
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        _gameManager = FindObjectOfType<GameManager>();
     }
 
-    private void Start()
+    public void Init()
     {
-        transform.position = Vector3.zero;
+        transform.localPosition = Vector3.zero;
         transform.eulerAngles = new Vector3(0, 0, Random.Range(-45, 45));
-        _rigidbody2D.velocity = transform.up * _speed;
+        _rigidbody2D.velocity = transform.up * Speed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        _gameManager.Lives--;
+        
     }
 }
