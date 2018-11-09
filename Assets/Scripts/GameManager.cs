@@ -1,16 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private int _lives = 5;
-    [SerializeField] private Text _textlLives;
+    private readonly Dictionary<int, int> _miniGamesPerLevel = new Dictionary<int, int>
+    {
+        {1, 1},
+        {5, 2},
+        {10, 3},
+        {15, 4}
+    };
     [SerializeField] private GameObject _gameOverPanel;
+    private float _levelTimeLeft;
+    [SerializeField] private int _lives = 5;
     [SerializeField] private List<MiniGame> _miniGames = new List<MiniGame>();
+    [SerializeField] private Text _textLevel;
+    [SerializeField] private Text _textLives;
+    [SerializeField] private float _timePerLevel = 10f;
+    [SerializeField] private Text _timer;
 
     public int Lives
     {
@@ -18,7 +31,7 @@ public class GameManager : MonoBehaviour
         set
         {
             _lives = value;
-            _textlLives.text = Lives.ToString();
+            _textLives.text = Lives.ToString();
             if (Lives == 0)
                 GameOver();
         }
@@ -39,12 +52,35 @@ public class GameManager : MonoBehaviour
     {
         _gameOverPanel.SetActive(false);
         Time.timeScale = 1f;
-        _textlLives.text = Lives.ToString();
+        _textLives.text = Lives.ToString();
     }
 
-    private void Start()
+    private IEnumerable<MiniGame> SelectMiniGames(int level)
     {
-        _miniGames.OrderBy(game => System.Guid.NewGuid()).First().StartMinigame();
+        var numberOfMinigames = _miniGamesPerLevel.Last(pair => level >= pair.Key).Value;
+        return _miniGames.OrderBy(minigame => Guid.NewGuid()).Take(numberOfMinigames).ToList();
+    }
+
+    private IEnumerator NewLevel(int level)
+    {
+        _miniGames.ForEach(miniGame => miniGame.StopMinigame());
+        _textLevel.text = level.ToString();
+        
+        foreach (var miniGame in SelectMiniGames(level)) StartCoroutine(miniGame.StartGameDelayed());
+
+        _levelTimeLeft = _timePerLevel;
+        while (_levelTimeLeft > 0)
+        {
+            _timer.text = _levelTimeLeft.ToString("0.00s", CultureInfo.InvariantCulture);
+            _levelTimeLeft -= Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator Start()
+    {
+        var currentLevel = 0;
+        while (true) yield return StartCoroutine(NewLevel(++currentLevel));
     }
 
     public void OnTheButtonClicked()

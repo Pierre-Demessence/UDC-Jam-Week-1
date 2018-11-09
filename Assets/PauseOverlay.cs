@@ -2,8 +2,8 @@
 
 public class PauseOverlay : MonoBehaviour
 {
-    public bool Paused
+    public bool Running
     {
-        set { gameObject.SetActive(value); }
+        set { gameObject.SetActive(!value); }
     }
 }

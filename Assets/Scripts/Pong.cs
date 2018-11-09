@@ -3,23 +3,23 @@
 public class Pong : MiniGame
 {
     private Ball _ball;
-    private Paddle _paddle;
-
     [SerializeField] private float _ballSpeed = 3;
+    private Paddle _paddle;
     [SerializeField] private float _paddleSpeed = 3;
 
-    public override void StartMinigame()
+    protected override void StartMinigame()
     {
         base.StartMinigame();
         _ball.Speed = _ballSpeed;
         _paddle.Speed = _paddleSpeed;
-        _ball.Init();
-        _paddle.Init();
+        _ball.Run();
+        _paddle.Run();
     }
 
-    protected override void OnFail()
+    protected override void ResetMinigame()
     {
-        base.OnFail();
+        _ball.Reset();
+        _paddle.Reset();
     }
 
     protected override void Awake()
@@ -33,6 +33,4 @@ public class Pong : MiniGame
     {
         _paddle.ReverseDirection();
     }
-    
-    
 }
