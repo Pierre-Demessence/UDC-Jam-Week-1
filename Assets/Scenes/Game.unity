@@ -2114,7 +2114,7 @@ MonoBehaviour:
   - {fileID: 1753806196}
   _textLevel: {fileID: 1896676599}
   _textLives: {fileID: 554296737}
-  _timePerLevel: 30
+  _timePerLevel: 15
   _timer: {fileID: 806659984}
 --- !u!4 &2060567583
 Transform:
